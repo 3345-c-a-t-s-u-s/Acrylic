@@ -996,8 +996,8 @@ local tableContents = {};
 local offLimits = {}
 local lines = {}
 
-function Library:GetTextSize(text,fontSize,font)
-	return TextService:GetTextSize(text,fontSize,font,Vector2.new(math.huge,math.huge))	
+function Library:GetTextSize(text,fontSize,font,custom_w)
+	return TextService:GetTextSize(text,fontSize,font,Vector2.new(custom_w or math.huge,math.huge))	
 end;
 
 function Library:HightlightSource(source)
@@ -2749,7 +2749,7 @@ function Library:CreateWindow(setup)
 			Description.Font = Enum.Font.Gotham
 			Description.Text = Setup.Description
 			Description.TextColor3 = Library.Colors.TextColor
-			Description.TextSize = 14.000
+			Description.TextSize = 13.000
 			Description.TextStrokeColor3 = Library.Colors.TextColor
 			Description.TextStrokeTransparency = 0.950
 			Description.TextTransparency = 0.500
@@ -2760,14 +2760,15 @@ function Library:CreateWindow(setup)
 
 			local UpdateBlock = function()
 				local TitleSize = 14;
-				local DescriptionSize = Library:GetTextSize(Description.Text,Description.TextSize,Description.Font).Y;
+				local MainSize = Library:GetTextSize(Description.Text,Description.TextSize,Description.Font);
+				local DescriptionSize = MainSize.Y;
 
-				Description.Size = UDim2.new(1, 0, 0, DescriptionSize)
+				Description.Size = UDim2.new(1, MainSize.X, 0, DescriptionSize + 5)
 
 				if Description.Text:byte() then
 					Description.Visible = true;
 					Library:Tween(ParagraphBlock,Library.TweenLibrary.SmallEffect,{
-						Size = UDim2.new(0.99, 0, 0, TitleSize + ((Description.Visible and Description.AbsoluteSize.Y + 10) or 0));
+						Size = UDim2.new(0.99, 0, 0, TitleSize + ((Description.Visible and Description.AbsoluteSize.Y + 5) or 0));
 					});
 
 				else
@@ -3398,13 +3399,13 @@ function Library:CreateWindow(setup)
 
 			return RootSkid;
 		end;
-		
+
 		function Root:AddImage(setup)
 			setup = setup or {};
 			setup.Title = setup.Title or "Image";
 			setup.Asset = setup.Asset or "rbxassetid://13333189485";
 			setup.Height = setup.Height or 120;
-			
+
 			local ImageBlock = Instance.new("Frame")
 			local DropShadow = Instance.new("ImageLabel")
 			local UIStroke = Instance.new("UIStroke")
@@ -3468,17 +3469,17 @@ function Library:CreateWindow(setup)
 			ImageLabel.ZIndex = 11
 			ImageLabel.Image = setup.Asset
 			ImageLabel.ScaleType = Enum.ScaleType.Fit
-			
+
 			local update = function()
 				Library:Tween(ImageBlock,Library.TweenLibrary.SmallEffect,{
 					Size = UDim2.new(0.99000001, 0, 0, Title.AbsoluteSize.Y + 17 + ImageLabel.AbsoluteSize.Y)
 				})
 			end;
-			
+
 			update()
-			
+
 			MainFrame:GetPropertyChangedSignal('AbsoluteSize'):Connect(update)
-			
+
 			local RootSkid = {};
 
 			function RootSkid:GetValue()
@@ -3489,7 +3490,7 @@ function Library:CreateWindow(setup)
 				height = height or setup.Height;
 				ImageLabel.Image = Setup
 				ImageLabel.Size = UDim2.new(0.980000019, 0, 0, height)
-				
+
 				update()
 			end;
 
@@ -3499,7 +3500,7 @@ function Library:CreateWindow(setup)
 
 			return RootSkid;
 		end;
-		
+
 		return Root;
 	end;
 
