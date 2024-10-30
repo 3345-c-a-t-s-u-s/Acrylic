@@ -3195,7 +3195,11 @@ function Library:CreateWindow(setup)
 			end;
 
 			function RootSkid:Fire(...)
-				setup.Callback(...);	
+			    return setup.Callback(...);	
+			end;
+
+                        function RootSkid:Title(title)
+		            TextLabel.Text = title;
 			end;
 
 			function RootSkid:Visible(value)
