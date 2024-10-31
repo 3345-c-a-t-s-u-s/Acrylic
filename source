@@ -1,7 +1,7 @@
--- Update: Fix Lag & add more icons --
+-- Updated: Lag Fixed --
 
 local Library = {
-	Version = 'skid.0.6',
+	Version = 'skid.0.7',
 	Loaded = true,
 	Discord = 'discord.gg/wPaQZwhMHy',
 	env = getgenv or getfenv,
@@ -2252,7 +2252,8 @@ function Library:CreateWindow(setup)
 	Library:Tween(Ico , Library.TweenLibrary.SmallEffect,{ImageTransparency = 1})
 
 	local WindowLibrary = {};
-
+	local OpenDelay = tick();
+	
 	local Block = Instance.new("Frame")
 	local Headers = Instance.new("Frame")
 	local Title = Instance.new("TextLabel")
@@ -2277,7 +2278,7 @@ function Library:CreateWindow(setup)
 		if not WindowLibrary.Toggle then
 			return;
 		end
-		
+
 		DataScrollingFrame.CanvasSize = UDim2.fromOffset(0,UIListLayout_2.AbsoluteContentSize.Y)
 	end)
 
@@ -2452,7 +2453,7 @@ function Library:CreateWindow(setup)
 		if not WindowLibrary.Toggle then
 			return;
 		end
-		
+
 		local data = math.clamp((MainFrame.AbsoluteSize.X / 3.5) , 0, 235);
 
 		Library:Tween(DataFrame,Library.TweenLibrary.BinEffect,{
@@ -2464,7 +2465,11 @@ function Library:CreateWindow(setup)
 		})
 	end
 
-	MainFrame:GetPropertyChangedSignal('AbsoluteSize'):Connect(LogUpdate)
+	spawn(function()
+		while true do task.wait(0.001);
+			LogUpdate()
+		end;
+	end)
 
 	Library:Tween(UIListLayout_2 , TweenInfo.new(1.5,Enum.EasingStyle.Quint),{
 		Padding = UDim.new(0, 6)
@@ -2826,7 +2831,7 @@ function Library:CreateWindow(setup)
 		game:GetService('RunService').RenderStepped:Connect(function()
 			if DropdownLibrary.OnDropdown and DropdownLibrary.BaseFrame then
 				Library:Tween(Dropdown,Library.TweenLibrary.SmallEffect,{
-					Size = UDim2.new(0, 173, 0, 213),
+					Size = UDim2.new(0, 173, 0, math.clamp(UIListLayout.AbsoluteContentSize.Y + 15,27,213)),
 					Position = UDim2.fromOffset(DropdownLibrary.BaseFrame.AbsolutePosition.X + (DropdownLibrary.BaseFrame.AbsoluteSize.X / 2),DropdownLibrary.BaseFrame.AbsolutePosition.Y - 25)
 				})
 			else
@@ -2983,7 +2988,7 @@ function Library:CreateWindow(setup)
 			if WindowLibrary.Toggle then
 				ScrollingFrame.CanvasSize = UDim2.fromOffset(0,UIListLayout.AbsoluteContentSize.Y);
 			end;
-		end)
+		end);
 
 		Library:MakeDrop(TFrame , UIStroke , Library.Colors.Hightlight)
 
@@ -3019,7 +3024,7 @@ function Library:CreateWindow(setup)
 			if not WindowLibrary.Toggle then
 				return;
 			end
-			
+
 			Title.Position = UDim2.new((30 / TFrame.AbsoluteSize.X), 0, 0.5, 0)
 		end)
 
@@ -3195,11 +3200,11 @@ function Library:CreateWindow(setup)
 			end;
 
 			function RootSkid:Fire(...)
-			    return setup.Callback(...);	
+				return setup.Callback(...);	
 			end;
 
-                        function RootSkid:Title(title)
-		            TextLabel.Text = title;
+			function RootSkid:Title(title)
+				TextLabel.Text = title;
 			end;
 
 			function RootSkid:Visible(value)
@@ -3471,7 +3476,7 @@ function Library:CreateWindow(setup)
 				if not WindowLibrary.Toggle then
 					return;
 				end
-				
+
 				local size = Library:GetTextSize(TextBox.Text,TextBox.TextSize,TextBox.Font);
 
 				if WindowLibrary.Toggle then
@@ -3490,8 +3495,8 @@ function Library:CreateWindow(setup)
 			Library:MakeDrop(Block , UIStroke_2 , Library.Colors.Hightlight)
 
 			TextBox:GetPropertyChangedSignal('Text'):Connect(function()
-				
-				
+
+
 				Update()
 				setup.Callback(TextBox.Text)
 			end)
@@ -3789,7 +3794,7 @@ function Library:CreateWindow(setup)
 				if not WindowLibrary.Toggle then
 					return;
 				end
-				
+
 				Block.Size = UDim2.new(0, (SliderBlock.AbsoluteSize.X / 2), 0.225, 0)
 			end;
 
@@ -4325,7 +4330,7 @@ function Library:CreateWindow(setup)
 				if not WindowLibrary.Toggle then
 					return;
 				end
-				
+
 				Library:Tween(ImageBlock,Library.TweenLibrary.SmallEffect,{
 					Size = UDim2.new(0.99000001, 0, 0, Title.AbsoluteSize.Y + 17 + ImageLabel.AbsoluteSize.Y)
 				})
@@ -4788,6 +4793,7 @@ function Library:CreateWindow(setup)
 	ToggleButton.Visible = false;
 
 	local OnScreen = function()
+		OpenDelay = tick();
 		WindowLibrary.Toggle = true;
 		ToggleButton.Visible = false;
 		Library:Tween(Ico , Library.TweenLibrary.WindowChangedFast,{ImageTransparency = 1})
@@ -4828,14 +4834,16 @@ function Library:CreateWindow(setup)
 
 	local Min = function()
 		WindowLibrary.Toggle = not WindowLibrary.Toggle;
-
+		
 		if WindowLibrary.Toggle then
+			
 			ToggleButton.Visible = false;
 			Library:Tween(Block , Library.TweenLibrary.SmallEffect,{Position = UDim2.new(0.5, 0, 0.5, 0)})
 			Library:Tween(Ico , Library.TweenLibrary.SmallEffect,{ImageTransparency = 1})
 
 			OnScreen()
 		else
+			OpenDelay = tick();
 			ToggleButton.Visible = true;
 			Library:Tween(Ico , Library.TweenLibrary.WindowChangedFast,{ImageTransparency = 0.25})
 
@@ -4845,8 +4853,8 @@ function Library:CreateWindow(setup)
 			})
 
 			Library:Tween(MainFrame , Library.TweenLibrary.WindowChangedFast,{
-				Position = UDim2.fromScale(0.035,0.035)
-			})
+				Position = UDim2.fromOffset(29,27)
+			});
 		end;
 	end;
 
