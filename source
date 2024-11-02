@@ -1,7 +1,8 @@
--- Updated: Lag Fixed --
+-- Updated: Lag Fixed & Theme --
+-- This is not hyprland --
 
 local Library = {
-	Version = 'skid.0.7',
+	Version = 'skid.0.8',
 	Loaded = true,
 	Discord = 'discord.gg/wPaQZwhMHy',
 	env = getgenv or getfenv,
@@ -1529,6 +1530,7 @@ Library.TweenLibrary = {
 	SmallEffect = TweenInfo.new(0.5,Enum.EasingStyle.Quint),
 	FastEffect = TweenInfo.new(0.2,Enum.EasingStyle.Quint),
 	BinEffect = TweenInfo.new(0.01),
+	UltrsFast = TweenInfo.new(0.0001,Enum.EasingStyle.Linear)
 };
 
 
@@ -2230,7 +2232,11 @@ function Library:CreateWindow(setup)
 
 
 		GButton.MouseButton1Click:Connect(setup.KeySystemInfo.OnGetKey)
-
+		
+		function setup:CancelLogin()
+			setup.KeySystemInfo.Finished:Fire(setup.KeySystemInfo.CodeId)
+		end;
+		
 		while true do 
 			local this = setup.KeySystemInfo.Finished.Event:Wait();
 
@@ -2253,7 +2259,7 @@ function Library:CreateWindow(setup)
 
 	local WindowLibrary = {};
 	local OpenDelay = tick();
-	
+
 	local Block = Instance.new("Frame")
 	local Headers = Instance.new("Frame")
 	local Title = Instance.new("TextLabel")
@@ -2456,18 +2462,43 @@ function Library:CreateWindow(setup)
 
 		local data = math.clamp((MainFrame.AbsoluteSize.X / 3.5) , 0, 235);
 
-		Library:Tween(DataFrame,Library.TweenLibrary.BinEffect,{
+		--[[Library:Tween(DataFrame,Library.TweenLibrary.UltrsFast,{
 			Size = UDim2.new(0, data, 0, MainFrame.AbsoluteSize.Y - 33)
 		})
 
-		Library:Tween(TabFrames,Library.TweenLibrary.BinEffect,{
+		Library:Tween(TabFrames,Library.TweenLibrary.UltrsFast,{
 			Size = UDim2.new(0, (MainFrame.AbsoluteSize.X - (data + 10)), 0, MainFrame.AbsoluteSize.Y - 47)
-		})
+		})]]
+		
+		DataFrame.Size = UDim2.new(0, data, 0, MainFrame.AbsoluteSize.Y - 33)
+		TabFrames.Size = UDim2.new(0, (MainFrame.AbsoluteSize.X - (data + 10)), 0, MainFrame.AbsoluteSize.Y - 47)
 	end
 
 	spawn(function()
-		while true do task.wait(0.001);
-			LogUpdate()
+		local IsFullScreen = tick();
+		
+		while true do task.wait(0);
+			if WindowLibrary.Toggle then
+				if not WindowLibrary.FullScreen then
+					local dist = math.abs(MainFrame.Size.Y.Offset - setup.Size.Y.Offset);
+					
+					if dist <= 25 and (tick() - OpenDelay) > 1 then
+						LogUpdate();
+					else
+						if (tick() - OpenDelay) > 1 or (tick() - IsFullScreen) < 1 then
+							LogUpdate();
+							if (tick() - IsFullScreen) > 1 then
+								task.wait(0.1)
+							end;
+						end;
+					
+					end;
+					
+				else
+					IsFullScreen = tick();
+					LogUpdate();
+				end;
+			end;
 		end;
 	end)
 
@@ -2540,7 +2571,8 @@ function Library:CreateWindow(setup)
 		UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 		UIListLayout.Padding = UDim.new(0, 6)
-
+		UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center;
+		
 		UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
 			if WindowLibrary.Toggle then
 				ScrollingFrame.CanvasSize = UDim2.fromOffset(0,UIListLayout.AbsoluteContentSize.Y)
@@ -2829,6 +2861,7 @@ function Library:CreateWindow(setup)
 		end)
 
 		game:GetService('RunService').RenderStepped:Connect(function()
+			
 			if DropdownLibrary.OnDropdown and DropdownLibrary.BaseFrame then
 				Library:Tween(Dropdown,Library.TweenLibrary.SmallEffect,{
 					Size = UDim2.new(0, 173, 0, math.clamp(UIListLayout.AbsoluteContentSize.Y + 15,27,213)),
@@ -4270,7 +4303,7 @@ function Library:CreateWindow(setup)
 
 			ImageBlock.Name = "ImageBlock"
 			ImageBlock.Parent = ScrollingFrame
-			ImageBlock.BackgroundColor3 = Color3.fromRGB(22, 25, 29)
+			ImageBlock.BackgroundColor3 = Library.Colors.Default
 			ImageBlock.BackgroundTransparency = 0.250
 			ImageBlock.BorderColor3 = Color3.fromRGB(0, 0, 0)
 			ImageBlock.BorderSizePixel = 0
@@ -4311,6 +4344,7 @@ function Library:CreateWindow(setup)
 			Title.TextSize = 14.000
 			Title.TextStrokeColor3 = Color3.fromRGB(191, 193, 195)
 			Title.TextStrokeTransparency = 0.950
+			Title.TextColor3 = Library.Colors.TextColor;
 			Title.TextWrapped = true
 			Title.TextXAlignment = Enum.TextXAlignment.Left
 
@@ -4834,9 +4868,9 @@ function Library:CreateWindow(setup)
 
 	local Min = function()
 		WindowLibrary.Toggle = not WindowLibrary.Toggle;
-		
+
 		if WindowLibrary.Toggle then
-			
+
 			ToggleButton.Visible = false;
 			Library:Tween(Block , Library.TweenLibrary.SmallEffect,{Position = UDim2.new(0.5, 0, 0.5, 0)})
 			Library:Tween(Ico , Library.TweenLibrary.SmallEffect,{ImageTransparency = 1})
@@ -5146,24 +5180,27 @@ function Library:CreateWindow(setup)
 
 	Library.UserInputService.InputChanged:Connect(function(input)
 		if IsHold and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
-			local pios = input.Position;
-			local x = (pios.X - MainFrame.AbsolutePosition.X) 
+			if WindowLibrary.Toggle then
+				local pios = input.Position;
+				local x = (pios.X - MainFrame.AbsolutePosition.X) 
 
-			local y = (pios.Y - MainFrame.AbsolutePosition.Y) 
+				local y = (pios.Y - MainFrame.AbsolutePosition.Y) 
 
-			if x < 460 then x = 460 end
-			if y < 310 then y = 310 end
+				if x < 460 then x = 460 end
+				if y < 310 then y = 310 end
 
-			local Offset = UDim2.new(0,x,0,y)
-			local plus = UDim2.fromOffset(-(MainFrame.AbsoluteSize.X - x) / 2, -(MainFrame.AbsoluteSize.Y - y) / 2);
+				local Offset = UDim2.new(0,x,0,y)
+				local plus = UDim2.fromOffset(-(MainFrame.AbsoluteSize.X - x) / 2, -(MainFrame.AbsoluteSize.Y - y) / 2);
+				
+				setup.Size = Offset
+				
+				Library:Tween(MainFrame , Library.TweenLibrary.FastEffect,{
+					Size = Offset,
+					Position = MainFrame.Position + plus,
+				})
 
-			Library:Tween(MainFrame , Library.TweenLibrary.FastEffect,{
-				Size = Offset,
-				Position = MainFrame.Position + plus,
-			})
-
-			WindowLibrary.SavedPosition = MainFrame.Position + plus
-			setup.Size = Offset
+				WindowLibrary.SavedPosition = MainFrame.Position + plus
+			end
 		end;
 
 		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
