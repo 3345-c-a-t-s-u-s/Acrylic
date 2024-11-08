@@ -2951,6 +2951,7 @@ function Library:CreateWindow(setup)
 		Title.TextStrokeTransparency = 0.950
 		Title.TextWrapped = true
 		Title.TextXAlignment = Enum.TextXAlignment.Left
+		Title.RichText = true;
 
 		Arrow.Name = "Arrow"
 		Arrow.Parent = TFrame
