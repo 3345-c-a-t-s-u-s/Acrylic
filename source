@@ -2,12 +2,16 @@
 -- This is not hyprland --
 
 local Library = {
-	Version = 'skid.0.8',
+	Version = 'Acrylic.0.4',
 	Loaded = true,
 	Discord = 'discord.gg/wPaQZwhMHy',
 	env = getgenv or getfenv,
 	Executor = {"s","w","z","t","a","c"},
 	Skid = true,
+	pcall = pcall,
+	setfenv = setfenv,
+	info = debug.info,
+	xpcall = xpcall,
 };
 
 Library.Icons = {
@@ -1978,11 +1982,12 @@ function Library:CreateWindow(setup)
 	Library:Tween(MainFrame , Library.TweenLibrary.SmallEffect,{Size = Library.SizeLibrary.Loading})
 	Library:Tween(Ico , Library.TweenLibrary.SmallEffect,{ImageTransparency = 0.25})
 
-
 	if setup.KeySystem then
 		setup.KeySystemInfo.Enabled = true;
 		setup.KeySystemInfo.Finished = Instance.new('BindableEvent');
+		
 		task.wait(1)
+		
 		task.delay(0.1,function()
 			Library:Tween(Ico , Library.TweenLibrary.SmallEffect,{ImageTransparency = 1})
 		end)
@@ -2018,8 +2023,8 @@ function Library:CreateWindow(setup)
 		AuthFunction.BorderSizePixel = 0
 		AuthFunction.Position = UDim2.new(0.5, 0, -1.5, 0)
 		AuthFunction.Size = UDim2.new(1, 0, 1, 0)
+		
 		Library:Tween(AuthFunction , Library.TweenLibrary.SmallEffect,{Position = UDim2.new(0.5, 0, 0.5, 0)})
-
 
 		Title.Name = "Title"
 		Title.Parent = AuthFunction
@@ -2219,6 +2224,7 @@ function Library:CreateWindow(setup)
 		LButton.MouseButton1Click:Connect(function()
 			if setup.KeySystemInfo.AntiSpam then return end;
 			setup.KeySystemInfo.AntiSpam = true;
+			
 			local verify = setup.KeySystemInfo.OnLogin(TextBox.Text);
 
 			if verify then
@@ -2232,11 +2238,11 @@ function Library:CreateWindow(setup)
 
 
 		GButton.MouseButton1Click:Connect(setup.KeySystemInfo.OnGetKey)
-		
+
 		function setup:CancelLogin()
 			setup.KeySystemInfo.Finished:Fire(setup.KeySystemInfo.CodeId)
 		end;
-		
+
 		while true do 
 			local this = setup.KeySystemInfo.Finished.Event:Wait();
 
@@ -2469,19 +2475,19 @@ function Library:CreateWindow(setup)
 		Library:Tween(TabFrames,Library.TweenLibrary.UltrsFast,{
 			Size = UDim2.new(0, (MainFrame.AbsoluteSize.X - (data + 10)), 0, MainFrame.AbsoluteSize.Y - 47)
 		})]]
-		
+
 		DataFrame.Size = UDim2.new(0, data, 0, MainFrame.AbsoluteSize.Y - 33)
 		TabFrames.Size = UDim2.new(0, (MainFrame.AbsoluteSize.X - (data + 10)), 0, MainFrame.AbsoluteSize.Y - 47)
 	end
 
 	spawn(function()
 		local IsFullScreen = tick();
-		
+
 		while true do task.wait(0);
 			if WindowLibrary.Toggle then
 				if not WindowLibrary.FullScreen then
 					local dist = math.abs(MainFrame.Size.Y.Offset - setup.Size.Y.Offset);
-					
+
 					if dist <= 25 and (tick() - OpenDelay) > 1 then
 						LogUpdate();
 					else
@@ -2491,9 +2497,9 @@ function Library:CreateWindow(setup)
 								task.wait(0.1)
 							end;
 						end;
-					
+
 					end;
-					
+
 				else
 					IsFullScreen = tick();
 					LogUpdate();
@@ -2572,7 +2578,7 @@ function Library:CreateWindow(setup)
 		UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 		UIListLayout.Padding = UDim.new(0, 6)
 		UIListLayout.VerticalAlignment = Enum.VerticalAlignment.Center;
-		
+
 		UIListLayout:GetPropertyChangedSignal('AbsoluteContentSize'):Connect(function()
 			if WindowLibrary.Toggle then
 				ScrollingFrame.CanvasSize = UDim2.fromOffset(0,UIListLayout.AbsoluteContentSize.Y)
@@ -2861,7 +2867,7 @@ function Library:CreateWindow(setup)
 		end)
 
 		game:GetService('RunService').RenderStepped:Connect(function()
-			
+
 			if DropdownLibrary.OnDropdown and DropdownLibrary.BaseFrame then
 				Library:Tween(Dropdown,Library.TweenLibrary.SmallEffect,{
 					Size = UDim2.new(0, 173, 0, math.clamp(UIListLayout.AbsoluteContentSize.Y + 15,27,213)),
@@ -3409,7 +3415,8 @@ function Library:CreateWindow(setup)
 			setup.PlaceHolder = setup.PlaceHolder or '';
 			setup.Default = setup.Default or '';
 			setup.Callback = setup.Callback or function() end;
-
+			setup.Numeric = setup.Numeric or false;
+			
 			local TextBoxBlock = Instance.new("Frame")
 			local DropShadow = Instance.new("ImageLabel")
 			local UIStroke = Instance.new("UIStroke")
@@ -3529,7 +3536,19 @@ function Library:CreateWindow(setup)
 			Library:MakeDrop(Block , UIStroke_2 , Library.Colors.Hightlight)
 
 			TextBox:GetPropertyChangedSignal('Text'):Connect(function()
-
+				if setup.Numeric then
+					TextBox.Text = string.gsub(TextBox.Text , '[%a+ %p+]' , '');
+					
+					Update();
+					
+					if not tonumber(TextBox.Text) then
+						return;	
+					end;
+					
+					setup.Callback(tonumber(TextBox.Text) or 0);
+					return;
+				end;
+				
 
 				Update()
 				setup.Callback(TextBox.Text)
@@ -5192,9 +5211,9 @@ function Library:CreateWindow(setup)
 
 				local Offset = UDim2.new(0,x,0,y)
 				local plus = UDim2.fromOffset(-(MainFrame.AbsoluteSize.X - x) / 2, -(MainFrame.AbsoluteSize.Y - y) / 2);
-				
+
 				setup.Size = Offset
-				
+
 				Library:Tween(MainFrame , Library.TweenLibrary.FastEffect,{
 					Size = Offset,
 					Position = MainFrame.Position + plus,
@@ -5210,7 +5229,6 @@ function Library:CreateWindow(setup)
 			end;
 		end;
 	end)
-
 
 	return WindowLibrary;
 end;
