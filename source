@@ -2,7 +2,7 @@
 -- This is not hyprland --
 
 local Library = {
-	Version = 'Acrylic.0.4',
+	Version = 'Acrylic.0.5',
 	Loaded = true,
 	Discord = 'discord.gg/wPaQZwhMHy',
 	env = getgenv or getfenv,
@@ -1985,9 +1985,9 @@ function Library:CreateWindow(setup)
 	if setup.KeySystem then
 		setup.KeySystemInfo.Enabled = true;
 		setup.KeySystemInfo.Finished = Instance.new('BindableEvent');
-		
+
 		task.wait(1)
-		
+
 		task.delay(0.1,function()
 			Library:Tween(Ico , Library.TweenLibrary.SmallEffect,{ImageTransparency = 1})
 		end)
@@ -2023,7 +2023,7 @@ function Library:CreateWindow(setup)
 		AuthFunction.BorderSizePixel = 0
 		AuthFunction.Position = UDim2.new(0.5, 0, -1.5, 0)
 		AuthFunction.Size = UDim2.new(1, 0, 1, 0)
-		
+
 		Library:Tween(AuthFunction , Library.TweenLibrary.SmallEffect,{Position = UDim2.new(0.5, 0, 0.5, 0)})
 
 		Title.Name = "Title"
@@ -2224,7 +2224,7 @@ function Library:CreateWindow(setup)
 		LButton.MouseButton1Click:Connect(function()
 			if setup.KeySystemInfo.AntiSpam then return end;
 			setup.KeySystemInfo.AntiSpam = true;
-			
+
 			local verify = setup.KeySystemInfo.OnLogin(TextBox.Text);
 
 			if verify then
@@ -3416,7 +3416,7 @@ function Library:CreateWindow(setup)
 			setup.Default = setup.Default or '';
 			setup.Callback = setup.Callback or function() end;
 			setup.Numeric = setup.Numeric or false;
-			
+
 			local TextBoxBlock = Instance.new("Frame")
 			local DropShadow = Instance.new("ImageLabel")
 			local UIStroke = Instance.new("UIStroke")
@@ -3537,18 +3537,19 @@ function Library:CreateWindow(setup)
 
 			TextBox:GetPropertyChangedSignal('Text'):Connect(function()
 				if setup.Numeric then
-					TextBox.Text = string.gsub(TextBox.Text , '[%a+ %p+]' , '');
 					
+					TextBox.Text = string.gsub(TextBox.Text, '[^0-9.]', '')
+
 					Update();
-					
+
 					if not tonumber(TextBox.Text) then
 						return;	
 					end;
-					
+
 					setup.Callback(tonumber(TextBox.Text) or 0);
 					return;
 				end;
-				
+
 
 				Update()
 				setup.Callback(TextBox.Text)
@@ -5189,12 +5190,16 @@ function Library:CreateWindow(setup)
 	Resize.InputBegan:Connect(function(std)
 		if std.UserInputType == Enum.UserInputType.MouseButton1 or std.UserInputType == Enum.UserInputType.Touch then
 			IsHold = true
+			if Library.UserInputService.TouchEnabled then
+				Resize.Size = UDim2.new(0.15000003, 85, 0.15000003, 85)
+			end
 		end
 	end)
 
 	Resize.InputEnded:Connect(function(std)
 		if std.UserInputType == Enum.UserInputType.MouseButton1 or std.UserInputType == Enum.UserInputType.Touch then
 			IsHold = false
+			Resize.Size = UDim2.new(0.075000003, 0, 0.075000003, 0)
 		end
 	end)
 
