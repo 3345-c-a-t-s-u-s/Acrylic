@@ -1,6 +1,9 @@
 # Acrylic UI
 library for roblox by 4lpaca (Kncrypt Hub)
-![image](https://github.com/user-attachments/assets/dd92072a-2dac-4ccb-90c3-31a172e7fd52)
+
+
+![image](https://github.com/user-attachments/assets/6d9b81ce-b959-4117-8d2b-af2544a6843c)
+
 
 - Resizable
 - Minimize
