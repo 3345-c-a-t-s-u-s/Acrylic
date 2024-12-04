@@ -1578,7 +1578,7 @@ local tableContents = {};
 local lines = {};
 local LoadAcrylic = function()
 	local GuiSystem = {};
-	
+
 	local Twen = game:GetService('TweenService');
 	local RunService = game:GetService('RunService');
 	local CurrentCamera = workspace.CurrentCamera;
@@ -2991,7 +2991,7 @@ function Library:CreateWindow(setup)
 				end;
 			end;
 		end;
-		
+
 		do
 			local Watermark = Instance.new("Frame")
 			local UIListLayout = Instance.new("UIListLayout")
@@ -3010,7 +3010,7 @@ function Library:CreateWindow(setup)
 			UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
 			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 			UIListLayout.Padding = UDim.new(0, 1)
-			
+
 			function WindowLibrary:AddWatermark(text)
 				local Frame = Instance.new("Frame")
 				local UIStroke = Instance.new("UIStroke")
@@ -3023,7 +3023,7 @@ function Library:CreateWindow(setup)
 				Frame.BorderSizePixel = 0
 				Frame.Size = UDim2.new(0,0,0,0)
 				Frame.ZIndex = 255;
-				
+
 				UIStroke.Transparency = 0.850
 				UIStroke.Color = Color3.fromRGB(156, 156, 156)
 				UIStroke.Parent = Frame
@@ -3045,43 +3045,43 @@ function Library:CreateWindow(setup)
 				TextLabel.Text = text or "";
 				TextLabel.ZIndex = 256;
 				TextLabel.RichText = true;
-				
+
 				local update = function()
-					local size = Library:GetTextSize(TextLabel.Text,13,TextLabel.Font);
-					
+					local size = Library:GetTextSize(TextLabel.Text:gsub("<.->", ""),13,TextLabel.Font);
+
 					Library:Tween(Frame , Library.TweenLibrary.FastEffect , {
 						Size = UDim2.new(0, size.X + 10, 0, size.Y + 5);
 					})
 				end;
-				
+
 				local Index = {};
-				
+
 				function Index:Visible(v)
 					Frame.Visible = v;
 				end
-				
+
 				function Index:Update()
 					update()
 				end;
-				
+
 				function Index:Text(a)
 					TextLabel.Text = a;
 					update()
 				end;
-				
+
 				function Index:Destroy()
 					Frame:Destroy();
 				end;
-				
+
 				update();
-				
+
 				return Index;
 			end;
 		end;
-		
+
 		DropdownLibrary.OnDropdown = false;
 		DropdownLibrary.Hover = false;
-		
+
 		local CloseTick = tick();
 
 		function WindowLibrary:OpenDropdown(BaseFrame :Frame)
@@ -3143,7 +3143,7 @@ function Library:CreateWindow(setup)
 	end;
 
 	InitDropdown();
-	
+
 	do
 		local Tip = Instance.new("TextLabel")
 
@@ -3163,29 +3163,29 @@ function Library:CreateWindow(setup)
 		Tip.TextXAlignment = Enum.TextXAlignment.Left
 		Tip.TextYAlignment = Enum.TextYAlignment.Top
 		Tip.Visible = false;
-		
+
 		function WindowLibrary:AddToolTip(object : GuiObject, text : string)
 			object.MouseEnter:Connect(function()
 				Tip.Visible = true;
 				Tip.ZIndex = 155;
 				Tip.Text = text;
 			end);
-			
+
 			object.MouseLeave:Connect(function()
 				Tip.Visible = false;
 			end);
 		end;
-		
+
 		game:GetService('RunService'):BindToRenderStep("_TOOL_TIP_",120,function()
 			if Tip.Visible then
 				Library:Tween(Tip,Library.TweenLibrary.FastEffect,{
 					TextTransparency = 0.55,
 					TextStrokeTransparency = 0.950
 				})
-				
+
 				local siz = Library:GetTextSize(Tip.Text,14,Tip.Font);
 				local pos = Library.UserInputService:GetMouseLocation();
-				
+
 				Tip.Size = UDim2.fromOffset(siz.X + 1,siz.Y + 2);
 				Tip.Position = UDim2.fromOffset(pos.X + (siz.X / 5),pos.Y - 58)
 			else
@@ -3445,7 +3445,7 @@ function Library:CreateWindow(setup)
 			setup.Title = setup.Title or "Button"
 			setup.Callback = setup.Callback or function() end;
 			setup.Tip = setup.Tip or nil;
-			
+
 			local ButtonBlock = Instance.new("Frame")
 			local DropShadow = Instance.new("ImageLabel")
 			local UIStroke = Instance.new("UIStroke")
@@ -3529,11 +3529,11 @@ function Library:CreateWindow(setup)
 			Button.TextTransparency = 1.000
 
 			Library:MakeDrop(ButtonBlock , UIStroke , Library.Colors.Hightlight)
-			
+
 			if setup.Tip then
 				WindowLibrary:AddToolTip(ButtonBlock , tostring(setup.Tip));
 			end;
-			
+
 			Button.MouseButton1Down:Connect(function()
 				Library:Tween(Arrow,Library.TweenLibrary.SmallEffect,{
 					Position = UDim2.new(0.999, 0, 0.5, 0),
@@ -3686,11 +3686,11 @@ function Library:CreateWindow(setup)
 			Button.TextTransparency = 1.000
 
 			Library:MakeDrop(ToggleBlock , UIStroke , Library.Colors.Hightlight)
-			
+
 			if setup.Tip then
 				WindowLibrary:AddToolTip(ToggleBlock , tostring(setup.Tip));
 			end;
-			
+
 			local UILib = function(value)
 				if value then
 					Library:Tween(ValueBlock,Library.TweenLibrary.SmallEffect,{
@@ -3909,7 +3909,7 @@ function Library:CreateWindow(setup)
 			Setup = Setup or {};
 			Setup.Title = Setup.Title
 			Setup.Description = Setup.Description or "";
-	
+
 			local ParagraphBlock = Instance.new("Frame")
 			local DropShadow = Instance.new("ImageLabel")
 			local UIStroke = Instance.new("UIStroke")
@@ -4161,11 +4161,11 @@ function Library:CreateWindow(setup)
 
 			Library:MakeDrop(SliderBlock , UIStroke , Library.Colors.Hightlight)
 
-			
+
 			if setup.Tip then
 				WindowLibrary:AddToolTip(SliderBlock , tostring(setup.Tip));
 			end;
-			
+
 			local function Rounding(num, numDecimalPlaces)
 				local mult = 10^(numDecimalPlaces or 0)
 				return math.floor(num * mult + 0.5) / mult
@@ -4373,11 +4373,11 @@ function Library:CreateWindow(setup)
 			Button.TextTransparency = 1.000
 
 			Library:MakeDrop(KeybindBlock , UIStroke , Library.Colors.Hightlight);
-			
+
 			if setup.Tip then
 				WindowLibrary:AddToolTip(KeybindBlock , tostring(setup.Tip));
 			end;
-			
+
 			local UpdateSize = function()
 				local Size = Library:GetTextSize(ValueText.Text,ValueText.TextSize,ValueText.Font);
 
@@ -4580,11 +4580,11 @@ function Library:CreateWindow(setup)
 			Library:MakeDrop(DropdownBlock , UIStroke , Library.Colors.Hightlight)
 
 			Library:MakeDrop(Block,UIStroke_2,Library.Colors.Hightlight);
-			
+
 			if setup.Tip then
 				WindowLibrary:AddToolTip(DropdownBlock , tostring(setup.Tip));
 			end;
-			
+
 			local UpdateSize = function()
 				local size = Library:GetTextSize(ValueText.Text,ValueText.TextSize,ValueText.Font)
 				pcall(function()
@@ -4715,11 +4715,11 @@ function Library:CreateWindow(setup)
 			ImageLabel.ZIndex = 11
 			ImageLabel.Image = setup.Asset
 			ImageLabel.ScaleType = Enum.ScaleType.Fit
-			
+
 			if setup.Tip then
 				WindowLibrary:AddToolTip(ImageBlock , tostring(setup.Tip));
 			end;
-			
+
 			local update = function()
 				if not WindowLibrary.Toggle then
 					return;
