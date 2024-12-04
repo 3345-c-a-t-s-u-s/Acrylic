@@ -2,7 +2,7 @@
 -- This is not hyprland --
 
 local Library = {
-	Version = 'Acrylic.0.5',
+	Version = 'Acrylic.0.6',
 	Loaded = true,
 	Discord = 'discord.gg/wPaQZwhMHy',
 	env = getgenv or getfenv,
@@ -1449,7 +1449,7 @@ end;
 function Library.Theme:Discord()
 	Library.Colors = {
 		Hightlight = Color3.fromRGB(114,137,218),
-		Default = Color3.fromRGB(44,47,51),
+		Default = Color3.fromRGB(35, 37, 40),
 		Disable = Color3.fromRGB(167, 173, 188),
 		TextColor = Color3.fromRGB(234, 234, 234),
 	}
@@ -1510,6 +1510,33 @@ function Library.Theme:Custom(Hightlight,Default,Disable,TextColor)
 	}
 end
 
+function Library.Theme:HightGreen()
+	Library.Colors = {
+		Hightlight = Color3.fromRGB(0, 255, 140),
+		Default = Color3.fromRGB(8, 13, 12),
+		Disable = Color3.fromRGB(163, 188, 165),
+		TextColor = Color3.fromRGB(255, 255, 255),
+	}
+end
+
+function Library.Theme:Halloween()
+	Library.Colors = {
+		Hightlight = Color3.fromRGB(255, 162, 0),
+		Default = Color3.fromRGB(13, 11, 10),
+		Disable = Color3.fromRGB(188, 156, 156),
+		TextColor = Color3.fromRGB(255, 242, 245),
+	}
+end
+
+function Library.Theme:Christmas()
+	Library.Colors = {
+		Hightlight = Color3.fromRGB(138, 220, 255),
+		Default = Color3.fromRGB(11, 13, 13),
+		Disable = Color3.fromRGB(81, 103, 104),
+		TextColor = Color3.fromRGB(249, 249, 249),
+	}
+end
+
 function Library.Theme:Random()
 	local RNG = Random.new();
 
@@ -1549,8 +1576,154 @@ local objects = {"[^%w_:]([%a_][%a%d_]*):", "^([%a_][%a%d_]*):"}
 local other = {"[^_%s%w=>~<%-%+%*]", ">", "~", "<", "%-", "%+", "=", "%*"}
 local tableContents = {};
 local lines = {};
+local LoadAcrylic = function()
+	local GuiSystem = {};
+	
+	local Twen = game:GetService('TweenService');
+	local RunService = game:GetService('RunService');
+	local CurrentCamera = workspace.CurrentCamera;
 
-Library.UIBlur = (_C and Source) or require(script:WaitForChild('UIBlur'));
+	function GuiSystem:Hash()
+		return string.reverse(string.gsub(game:GetService('HttpService'):GenerateGUID(false),'..',function(aa)
+			return string.reverse(aa)
+		end))
+	end
+
+	local function Hiter(planePos, planeNormal, rayOrigin, rayDirection)
+		local n = planeNormal
+		local d = rayDirection
+		local v = rayOrigin - planePos
+
+		local num = (n.x*v.x) + (n.y*v.y) + (n.z*v.z)
+		local den = (n.x*d.x) + (n.y*d.y) + (n.z*d.z)
+		local a = -num / den
+
+		return rayOrigin + (a * rayDirection), a;
+	end;
+
+	function GuiSystem.new(frame,NoAutoBackground)
+		local Part = Instance.new('Part',workspace);
+		local DepthOfField = Instance.new('DepthOfFieldEffect',game:GetService('Lighting'));
+		local SurfaceGui = Instance.new('SurfaceGui',Part);
+		local BlockMesh = Instance.new("BlockMesh");
+
+		BlockMesh.Parent = Part;
+
+		Part.Material = Enum.Material.Glass;
+		Part.Transparency = 1;
+		Part.Reflectance = 1;
+		Part.CastShadow = false;
+		Part.Anchored = true;
+		Part.CanCollide = false;
+		Part.CanQuery = false;
+		Part.CollisionGroup = GuiSystem:Hash();
+		Part.Size = Vector3.new(1, 1, 1) * 0.01;
+		Part.Color = Color3.fromRGB(0,0,0);
+
+		Twen:Create(Part,TweenInfo.new(1,Enum.EasingStyle.Quint,Enum.EasingDirection.In),{
+			Transparency = 0.8;
+		}):Play()
+
+		DepthOfField.Enabled = true;
+		DepthOfField.FarIntensity = 1;
+		DepthOfField.FocusDistance = 0;
+		DepthOfField.InFocusRadius = 500;
+		DepthOfField.NearIntensity = 1;
+
+		SurfaceGui.AlwaysOnTop = true;
+		SurfaceGui.Adornee = Part;
+		SurfaceGui.Active = true;
+		SurfaceGui.Face = Enum.NormalId.Front;
+		SurfaceGui.ZIndexBehavior = Enum.ZIndexBehavior.Global;
+
+		DepthOfField.Name = GuiSystem:Hash();
+		Part.Name = GuiSystem:Hash();
+		SurfaceGui.Name = GuiSystem:Hash();
+
+		local C4 = {
+			Update = nil,
+			Collection = SurfaceGui,
+			Enabled = true,
+			Instances = {
+				BlockMesh = BlockMesh,
+				Part = Part,
+				DepthOfField = DepthOfField,
+				SurfaceGui = SurfaceGui,
+			},
+			Signal = nil
+		};
+
+		local Update = function()
+			local _,updatec = pcall(function()
+				local userSettings = UserSettings():GetService("UserGameSettings")
+				local qualityLevel = userSettings.SavedQualityLevel.Value
+
+				if qualityLevel < 8 then
+					Twen:Create(Part,TweenInfo.new(1,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{
+						Transparency = 1;
+					}):Play()
+				else
+					Twen:Create(Part,TweenInfo.new(1,Enum.EasingStyle.Quint,Enum.EasingDirection.Out),{
+						Transparency = 0.8;
+					}):Play()
+				end;
+			end)
+
+			local corner0 = frame.AbsolutePosition;
+			local corner1 = corner0 + frame.AbsoluteSize;
+
+			local ray0 = CurrentCamera.ScreenPointToRay(CurrentCamera,corner0.X, corner0.Y, 1);
+			local ray1 = CurrentCamera.ScreenPointToRay(CurrentCamera,corner1.X, corner1.Y, 1);
+
+			local planeOrigin = CurrentCamera.CFrame.Position + CurrentCamera.CFrame.LookVector * (0.05 - CurrentCamera.NearPlaneZ);
+
+			local planeNormal = CurrentCamera.CFrame.LookVector;
+
+			local pos0 = Hiter(planeOrigin, planeNormal, ray0.Origin, ray0.Direction);
+			local pos1 = Hiter(planeOrigin, planeNormal, ray1.Origin, ray1.Direction);
+
+			pos0 = CurrentCamera.CFrame:PointToObjectSpace(pos0);
+			pos1 = CurrentCamera.CFrame:PointToObjectSpace(pos1);
+
+			local size   = pos1 - pos0;
+			local center = (pos0 + pos1) / 2;
+
+			BlockMesh.Offset = center
+			BlockMesh.Scale  = size / 0.0101;
+			Part.CFrame = CurrentCamera.CFrame;
+		end
+
+		C4.Update = Update;
+		C4.Signal = RunService.RenderStepped:Connect(Update);
+
+		pcall(function()
+			C4.Signal2 = CurrentCamera:GetPropertyChangedSignal('CFrame'):Connect(function()
+				Part.CFrame = CurrentCamera.CFrame;
+			end);
+		end)
+
+		C4.Destroy = function()
+			C4.Signal:Disconnect();
+			C4.Signal2:Disconnect();
+			C4.Update = function()
+
+			end;
+
+			Twen:Create(Part,TweenInfo.new(1),{
+				Transparency = 1
+			}):Play();
+
+			DepthOfField:Destroy();
+			Part:Destroy()
+		end;
+
+		return C4;
+	end;
+
+	return GuiSystem;
+end;
+
+Library.UIBlur = (_C and Source) or LoadAcrylic();
 Library.UserInputService = game:GetService('UserInputService');
 Library.PerformanceMode = false;
 Library.CodeColors = {};
@@ -2818,9 +2991,97 @@ function Library:CreateWindow(setup)
 				end;
 			end;
 		end;
+		
+		do
+			local Watermark = Instance.new("Frame")
+			local UIListLayout = Instance.new("UIListLayout")
 
+			Watermark.Name = "Watermark"
+			Watermark.Parent = ScreenGui;
+			Watermark.AnchorPoint = Vector2.new(1, 0)
+			Watermark.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			Watermark.BackgroundTransparency = 1.000
+			Watermark.BorderColor3 = Color3.fromRGB(0, 0, 0)
+			Watermark.BorderSizePixel = 0
+			Watermark.Position = UDim2.new(1, -5, 0, 35)
+			Watermark.Size = UDim2.new(0.200000003, 0, 0, 10)
+
+			UIListLayout.Parent = Watermark
+			UIListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+			UIListLayout.SortOrder = Enum.SortOrder.LayoutOrder
+			UIListLayout.Padding = UDim.new(0, 1)
+			
+			function WindowLibrary:AddWatermark(text)
+				local Frame = Instance.new("Frame")
+				local UIStroke = Instance.new("UIStroke")
+				local TextLabel = Instance.new("TextLabel")
+
+				Frame.Parent = Watermark
+				Frame.BackgroundColor3 = Library.Colors.Default
+				Frame.BackgroundTransparency = 0.250
+				Frame.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				Frame.BorderSizePixel = 0
+				Frame.Size = UDim2.new(0,0,0,0)
+				Frame.ZIndex = 255;
+				
+				UIStroke.Transparency = 0.850
+				UIStroke.Color = Color3.fromRGB(156, 156, 156)
+				UIStroke.Parent = Frame
+
+				TextLabel.Parent = Frame
+				TextLabel.AnchorPoint = Vector2.new(1, 0.5)
+				TextLabel.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+				TextLabel.BackgroundTransparency = 1.000
+				TextLabel.BorderColor3 = Color3.fromRGB(0, 0, 0)
+				TextLabel.BorderSizePixel = 0
+				TextLabel.Position = UDim2.new(1, -5, 0.5, 0)
+				TextLabel.Size = UDim2.new(0.9, 0, 0.9, 0)
+				TextLabel.Font = Enum.Font.Gotham
+				TextLabel.TextColor3 = Library.Colors.TextColor
+				TextLabel.TextSize = 13.000
+				TextLabel.TextStrokeTransparency = 0.950
+				TextLabel.TextXAlignment = Enum.TextXAlignment.Right
+				TextLabel.TextYAlignment = Enum.TextYAlignment.Top
+				TextLabel.Text = text or "";
+				TextLabel.ZIndex = 256;
+				TextLabel.RichText = true;
+				
+				local update = function()
+					local size = Library:GetTextSize(TextLabel.Text,13,TextLabel.Font);
+					
+					Library:Tween(Frame , Library.TweenLibrary.FastEffect , {
+						Size = UDim2.new(0, size.X + 10, 0, size.Y + 5);
+					})
+				end;
+				
+				local Index = {};
+				
+				function Index:Visible(v)
+					Frame.Visible = v;
+				end
+				
+				function Index:Update()
+					update()
+				end;
+				
+				function Index:Text(a)
+					TextLabel.Text = a;
+					update()
+				end;
+				
+				function Index:Destroy()
+					Frame:Destroy();
+				end;
+				
+				update();
+				
+				return Index;
+			end;
+		end;
+		
 		DropdownLibrary.OnDropdown = false;
 		DropdownLibrary.Hover = false;
+		
 		local CloseTick = tick();
 
 		function WindowLibrary:OpenDropdown(BaseFrame :Frame)
@@ -2882,6 +3143,59 @@ function Library:CreateWindow(setup)
 	end;
 
 	InitDropdown();
+	
+	do
+		local Tip = Instance.new("TextLabel")
+
+		Tip.Name = "Tip"
+		Tip.Parent = ScreenGui;
+		Tip.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		Tip.BackgroundTransparency = 1.000
+		Tip.BorderColor3 = Color3.fromRGB(0, 0, 0)
+		Tip.BorderSizePixel = 0
+		Tip.Size = UDim2.new(0, 250, 0, 16)
+		Tip.Visible = false
+		Tip.Font = Enum.Font.Gotham
+		Tip.Text = ""
+		Tip.TextColor3 = Library.Colors.TextColor;
+		Tip.TextSize = 14.000
+		Tip.TextStrokeTransparency = 0.950
+		Tip.TextXAlignment = Enum.TextXAlignment.Left
+		Tip.TextYAlignment = Enum.TextYAlignment.Top
+		Tip.Visible = false;
+		
+		function WindowLibrary:AddToolTip(object : GuiObject, text : string)
+			object.MouseEnter:Connect(function()
+				Tip.Visible = true;
+				Tip.ZIndex = 155;
+				Tip.Text = text;
+			end);
+			
+			object.MouseLeave:Connect(function()
+				Tip.Visible = false;
+			end);
+		end;
+		
+		game:GetService('RunService'):BindToRenderStep("_TOOL_TIP_",120,function()
+			if Tip.Visible then
+				Library:Tween(Tip,Library.TweenLibrary.FastEffect,{
+					TextTransparency = 0.55,
+					TextStrokeTransparency = 0.950
+				})
+				
+				local siz = Library:GetTextSize(Tip.Text,14,Tip.Font);
+				local pos = Library.UserInputService:GetMouseLocation();
+				
+				Tip.Size = UDim2.fromOffset(siz.X + 1,siz.Y + 2);
+				Tip.Position = UDim2.fromOffset(pos.X + (siz.X / 5),pos.Y - 58)
+			else
+				Library:Tween(Tip,Library.TweenLibrary.FastEffect,{
+					TextTransparency = 1,
+					TextStrokeTransparency = 1
+				})
+			end;
+		end)
+	end;
 
 	function WindowLibrary:AddTab(TabSetup)
 		TabSetup = TabSetup or {};
@@ -3130,7 +3444,8 @@ function Library:CreateWindow(setup)
 			setup = setup or {};
 			setup.Title = setup.Title or "Button"
 			setup.Callback = setup.Callback or function() end;
-
+			setup.Tip = setup.Tip or nil;
+			
 			local ButtonBlock = Instance.new("Frame")
 			local DropShadow = Instance.new("ImageLabel")
 			local UIStroke = Instance.new("UIStroke")
@@ -3214,7 +3529,11 @@ function Library:CreateWindow(setup)
 			Button.TextTransparency = 1.000
 
 			Library:MakeDrop(ButtonBlock , UIStroke , Library.Colors.Hightlight)
-
+			
+			if setup.Tip then
+				WindowLibrary:AddToolTip(ButtonBlock , tostring(setup.Tip));
+			end;
+			
 			Button.MouseButton1Down:Connect(function()
 				Library:Tween(Arrow,Library.TweenLibrary.SmallEffect,{
 					Position = UDim2.new(0.999, 0, 0.5, 0),
@@ -3367,7 +3686,11 @@ function Library:CreateWindow(setup)
 			Button.TextTransparency = 1.000
 
 			Library:MakeDrop(ToggleBlock , UIStroke , Library.Colors.Hightlight)
-
+			
+			if setup.Tip then
+				WindowLibrary:AddToolTip(ToggleBlock , tostring(setup.Tip));
+			end;
+			
 			local UILib = function(value)
 				if value then
 					Library:Tween(ValueBlock,Library.TweenLibrary.SmallEffect,{
@@ -3537,7 +3860,7 @@ function Library:CreateWindow(setup)
 
 			TextBox:GetPropertyChangedSignal('Text'):Connect(function()
 				if setup.Numeric then
-					
+
 					TextBox.Text = string.gsub(TextBox.Text, '[^0-9.]', '')
 
 					Update();
@@ -3586,7 +3909,7 @@ function Library:CreateWindow(setup)
 			Setup = Setup or {};
 			Setup.Title = Setup.Title
 			Setup.Description = Setup.Description or "";
-
+	
 			local ParagraphBlock = Instance.new("Frame")
 			local DropShadow = Instance.new("ImageLabel")
 			local UIStroke = Instance.new("UIStroke")
@@ -3838,7 +4161,11 @@ function Library:CreateWindow(setup)
 
 			Library:MakeDrop(SliderBlock , UIStroke , Library.Colors.Hightlight)
 
-
+			
+			if setup.Tip then
+				WindowLibrary:AddToolTip(SliderBlock , tostring(setup.Tip));
+			end;
+			
 			local function Rounding(num, numDecimalPlaces)
 				local mult = 10^(numDecimalPlaces or 0)
 				return math.floor(num * mult + 0.5) / mult
@@ -4046,7 +4373,11 @@ function Library:CreateWindow(setup)
 			Button.TextTransparency = 1.000
 
 			Library:MakeDrop(KeybindBlock , UIStroke , Library.Colors.Hightlight);
-
+			
+			if setup.Tip then
+				WindowLibrary:AddToolTip(KeybindBlock , tostring(setup.Tip));
+			end;
+			
 			local UpdateSize = function()
 				local Size = Library:GetTextSize(ValueText.Text,ValueText.TextSize,ValueText.Font);
 
@@ -4249,7 +4580,11 @@ function Library:CreateWindow(setup)
 			Library:MakeDrop(DropdownBlock , UIStroke , Library.Colors.Hightlight)
 
 			Library:MakeDrop(Block,UIStroke_2,Library.Colors.Hightlight);
-
+			
+			if setup.Tip then
+				WindowLibrary:AddToolTip(DropdownBlock , tostring(setup.Tip));
+			end;
+			
 			local UpdateSize = function()
 				local size = Library:GetTextSize(ValueText.Text,ValueText.TextSize,ValueText.Font)
 				pcall(function()
@@ -4380,7 +4715,11 @@ function Library:CreateWindow(setup)
 			ImageLabel.ZIndex = 11
 			ImageLabel.Image = setup.Asset
 			ImageLabel.ScaleType = Enum.ScaleType.Fit
-
+			
+			if setup.Tip then
+				WindowLibrary:AddToolTip(ImageBlock , tostring(setup.Tip));
+			end;
+			
 			local update = function()
 				if not WindowLibrary.Toggle then
 					return;
@@ -5004,8 +5343,6 @@ function Library:CreateWindow(setup)
 		setup.Duration = setup.Duration or 5;
 		setup.Description = setup.Description or setup.Desc or "Description";
 
-
-
 		local Notification = Instance.new("Frame")
 		local DropShadow = Instance.new("ImageLabel")
 		local Title = Instance.new("TextLabel")
@@ -5040,7 +5377,7 @@ function Library:CreateWindow(setup)
 
 		local CloseAnimation = function()
 			Library:Tween(Notification,Library.TweenLibrary.SmallEffect,{
-				Size = UDim2.new(0, 0, 0, 0),
+				Size = UDim2.new(0, Notification.Size.X.Offset, 0, 0),
 				BackgroundTransparency = 1
 			})
 
@@ -5050,7 +5387,7 @@ function Library:CreateWindow(setup)
 
 			Library:Tween(Title,Library.TweenLibrary.WindowChangedFast,{
 				TextStrokeTransparency = 1,
-				TextTransparency = 1
+				TextTransparency = 1,
 			})
 
 			Library:Tween(Close,Library.TweenLibrary.WindowChangedFast,{
@@ -5060,7 +5397,7 @@ function Library:CreateWindow(setup)
 
 			Library:Tween(Message,Library.TweenLibrary.WindowChangedFast,{
 				TextStrokeTransparency = 1,
-				TextTransparency = 1
+				TextTransparency = 1,
 			})
 		end;
 
@@ -5070,7 +5407,7 @@ function Library:CreateWindow(setup)
 		Notification.BackgroundTransparency = 1
 		Notification.BorderColor3 = Color3.fromRGB(27, 42, 53)
 		Notification.BorderSizePixel = 0
-		Notification.Size = UDim2.new(0, 200, 0, 25)
+		Notification.Size = UDim2.new(0, 200, 0, 1)
 		Notification.ZIndex = 0
 
 		DropShadow.Name = "DropShadow"
@@ -5133,8 +5470,8 @@ function Library:CreateWindow(setup)
 		Message.BackgroundTransparency = 1.000
 		Message.BorderColor3 = Color3.fromRGB(27, 42, 53)
 		Message.BorderSizePixel = 0
-		Message.Position = UDim2.new(0, 10, 0, 30)
-		Message.Size = UDim2.new(1, -20, 1, -38)
+		Message.Position = UDim2.new(0, 10, 0, 22)
+		Message.Size = UDim2.new(1, -20, 1, 0)
 		Message.ZIndex = 0
 		Message.Font = Enum.Font.Gotham
 		Message.Text = setup.Description
@@ -5153,7 +5490,7 @@ function Library:CreateWindow(setup)
 			local size = Library:GetTextSize(Message.Text:gsub("<.->", ""),Message.TextSize,Message.Font)
 
 			Library:Tween(Notification,Library.TweenLibrary.BinEffect,{
-				Size = UDim2.new(0, math.clamp(size.X,200,500), 0, 50 + size.Y),
+				Size = UDim2.new(0, math.clamp(size.X,200,500), 0, 10 + size.Y + Title.AbsoluteSize.Y),
 				BackgroundTransparency = 0.3
 			})
 		end;
