@@ -1,5 +1,10 @@
 # Acrylic UI
 library for roblox by 4lpaca (Kncrypt Hub)
+![image](https://github.com/user-attachments/assets/dd92072a-2dac-4ccb-90c3-31a172e7fd52)
+
+- Resizable
+- Minimize
+- Maximize
 
 ## Document
 ### Create Library
@@ -68,9 +73,31 @@ local Tab = Window:AddTab({
 })
 ```
 
-### Create Block
+### Create Paragraph
 ```lua
-Tab:AddBlock("Example")
+Tab:AddParagraph({
+	Title = "Paragraph",
+	Description = AcrylicLibrary:HightlightSource([[
+local X = 15;
+
+for I = 1 , X do
+	print(I);
+end;
+]])
+})
+```
+
+### Create Textbox
+```lua
+Tab:AddTextbox({
+	Title = "Textbox",
+	Default = "Hello, World",
+	PlaceHolder = "Placeholder",
+	Numeric = false,
+	Callback = function(value)
+		print(value)
+	end,
+})
 ```
 
 ### Create Button
