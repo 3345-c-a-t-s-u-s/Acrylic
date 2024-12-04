@@ -1,378 +1,184 @@
-# Acrylic
-This UI Library is skid
-- [Discord](https://discord.gg/kfZKGeWyhc)
+# Acrylic UI
+library for roblox by 4lpaca (Kncrypt Hub)
 
-- Why choose?
-
-1. It cool 😎
-2. not skid 1000%
-3. support mobile 😎
-4. nothing ✅
-
-![Screenshot 2024-10-15 193045](https://github.com/user-attachments/assets/04d94fd1-b5be-4dd0-8ebb-e9bee932e05d)
-## Create Library
+## Document
+### Create Library
 ```lua
-local Library = loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/3345-c-a-t-s-u-s/Acrylic/refs/heads/main/source'))();
+local AcrylicLibrary = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/3345-c-a-t-s-u-s/Acrylic/refs/heads/main/source", true))();
+local TextEffect = AcrylicLibrary.TextEffect;
 ```
 
-## Themes
-Note: run this code before create window
+### Themes
+NOTE: run this code before create window
+- Discord
 ```lua
-Library.Theme:Default()
+AcrylicLibrary.Theme:Discord()
 ```
+- Houston
 ```lua
-Library.Theme:Catppuccin()
+AcrylicLibrary.Theme:Houston()
 ```
+- Dark
 ```lua
-Library.Theme:Neverlose()
+AcrylicLibrary.Theme:Dark()
 ```
+- Light
 ```lua
-Library.Theme:Dark()
+AcrylicLibrary.Theme:Light()
 ```
+- Neverlose
 ```lua
-Library.Theme:Light()
+AcrylicLibrary.Theme:Neverlose()
 ```
+- Catppuccin
 ```lua
-Library.Theme:Discord()
+AcrylicLibrary.Theme:Catppuccin()
 ```
+- Matcha
 ```lua
-Library.Theme:Houston()
+AcrylicLibrary.Theme:Matcha()
 ```
+- Christmas
 ```lua
-Library.Theme:Matcha()
+AcrylicLibrary.Theme:Christmas()
+```
+- Halloween
+```lua
+AcrylicLibrary.Theme:Halloween()
+```
+- HightGreen
+```lua
+AcrylicLibrary.Theme:HightGreen()
 ```
 
-## Create Window
+### Create Window
 ```lua
-local Window = Library:CreateWindow({
-	Title = 'Acrylic',
-	Logo = "rbxassetid://7733920644",
-});
+local Window = AcrylicLibrary:CreateWindow({
+	Title = string.format("Acrylic Library - %s" , TextEffect:AddColor(AcrylicLibrary.Version, AcrylicLibrary.Colors.Hightlight)),
+	Logo = "rbxassetid://7733752630",
+	Keybind = Enum.KeyCode.LeftControl,
+})
 ```
 
-## Create Dialogs
+### Create Tab
+```lua
+local Tab = Window:AddTab({
+	Title = "Example",
+	Icon = "library"
+})
+```
 
-![Screenshot 2024-10-16 144720](https://github.com/user-attachments/assets/2fa97e73-8b2c-4b95-96bd-629c7376ea3a)
+### Create Block
+```lua
+Tab:AddBlock("Example")
+```
 
+### Create Button
+```lua
+Tab:AddButton({
+	Title = "Button",
+	Tip = "Click Me!",
+	Callback = function()
+		print('Click!')
+	end,
+})
+```
+
+### Create Toggle
+```lua
+Tab:AddToggle({
+	Title = "Toggle",
+	Tip = "Click Me!",
+	Default = false,
+	Callback = function(value)
+		print(value);
+	end,
+})
+```
+
+### Create Slider
+```lua
+Tab:AddSlider({
+	Title = "Slider",
+	Tip = "Min: 0\nMax: 100",
+	Min = 0,
+	Max = 100,
+	Default = 50,
+	Round = 2,
+	Callback = function(value)
+		print(value)
+	end,
+})
+```
+
+### Create Textbox
+```lua
+Tab:AddTextbox({
+	Title = "Textbox",
+	Default = "Hello, World",
+	PlaceHolder = "Placeholder",
+	Numeric = false,
+	Callback = function(value)
+		print(value)
+	end,
+})
+```
+
+### Create Keybind
+```lua
+Tab:AddKeybind({
+	Title = "Keybind",
+	Default = Enum.KeyCode.G,
+	Tip = "Keybind",
+	Callback = function(value)
+		print(value)
+	end,
+})
+```
+
+### Create Dropdown
+```lua
+Tab:AddDropdown({
+	Title = "Dropdown",
+	Values = {"V1","V2","V3","V4","V5"},
+	Default = "V1",
+	Multi = false,
+	MaxMulti = 4,
+	Callback = function(value)
+		print(value)
+	end,
+})
+```
+
+## Notification
+```lua
+Window:Notify({
+	Title = "Notification",
+	Description = "Description",
+	Duration = 5,
+})
+```
+
+## Watermark
+```lua
+Window:AddWatermark(string.format("WATERMARK [%s]",TextEffect:AddColor("KNCRYPT HUB - FREEMIUM", AcrylicLibrary.Colors.Hightlight)))
+```
+
+## Dialog
 ```lua
 Window:Dialog({
 	Title = "Dialog",
 	Buttons = {
 		{
-			Title = 'Huh?',
+			Title = "YES",
+			Hightlight = true,
 			Callback = function()
-				
-			end,
-		},{
-			Title = 'KKK',
-			Callback = function()
-				
+				print('ye')
 			end,
 		},
 		{
-			Title = 'No?',
-			Callback = function()
-
-			end,
-		},
-		{
-			Title = 'Kak',
-			Callback = function()
-
-			end,
+			Title = "NO",
 		}
 	}
 })
-```
-
-## Create Notification
-
-![Screenshot 2024-10-16 161000](https://github.com/user-attachments/assets/068b0b09-1100-48d7-9eb0-61a1bc6708e5)
-```lua
-Window:Notify({
-	Title = 'Notification',
-	Description = "Hello, World\n"..Library:HightlightSource('print("Hello, World")'),
-	Duration = 5
-})
-```
-
-## Create Block
-```lua
-ExampleTab:AddBlock('Example')
-```
-
-## Create Button
-```lua
-ExampleTab:AddButton({
-	Title = 'Button',
-	Callback = function()
-		print('Click!')
-	end,
-})
-```
-
-## Create Toggle
-```lua
-ExampleTab:AddToggle({
-	Title = 'Toggle',
-	Default = false,
-	Callback = function(value)
-		print('Toggle!',value)
-	end,
-})
-```
-
-## Create Slider
-```lua
-ExampleTab:AddSlider({
-	Title = 'Slider',
-	Max = 100,
-	Min = 1,
-	Default = 25,
-	Round = 1,
-	Callback = function(value)
-		print('Slider!',value)
-	end,
-})
-```
-
-## Create Keybind
-```lua
-ExampleTab:AddKeybind({
-	Title = 'Keybind',
-	Default = "LeftControl",
-	Callback = function(value)
-		print('Keybind!',value)
-	end,
-})
-```
-
-## Create Textbox
-```lua
-ExampleTab:AddTextbox({
-	Title = 'Textbox',
-	PlaceHolder = 'Type something',
-	--Default = "Text",
-	Callback = function(value)
-		print('Textbox!',value)
-	end,
-})
-```
-
-## Create Dropdown
-```lua
-ExampleTab:AddDropdown({
-	Title = 'Dropdown',
-	Values = {1,2,3,4,5,6,7,8,9,10},
-	Default = 5,
-	Callback = function(value)
-		print('Dropdown!',value)
-	end,
-})
-```
-
-## Create Dropdown (Multiple)
-```lua
-ExampleTab:AddDropdown({
-	Title = 'Multiple Dropdown',
-	Values = {1,2,3,4,5,6,7,8,9,10},
-	Default = {3,4,5,6,7},
-	Multi = true,
-	MaxMulti = 10,
-	Callback = function(value)
-		print('Multiple Dropdown!',value)
-	end,
-})
-```
-
-## Create Paragraph
-```lua
-ExampleTab:AddParagraph({
-	Title = 'Paragraph',
-	Description = "Description\n[1]: Example"
-})
-```
-
-### Create Lua Code
-```lua
-ExampleTab:AddParagraph({
-	Title = 'Paragraph',
-	Description = 'This is Lua Script!\n'..Library:HightlightSource([[
-local function primes(n)
-    local function isPrime(n)
-        for i = 2, math.sqrt(n) do
-            if n % i == 0 then
-                return false
-            end
-        end
-        return true
-    end
-    for i = 2, n do
-        if isPrime(i) then
-            print(i)
-        end
-    end
-end
-
-primes(20)
-	]])
-})
-```
-
-# Functions
-
-### Disable Animation
-```lua
-Library.PerformanceMode = true;
-```
-
-### Change UI Size
-```lua
-Window:Resize(Library.SizeLibrary.Default) -- UDim2
-```
-
-# Example Code
-```lua
-local Library = loadstring(game:HttpGetAsync('https://raw.githubusercontent.com/3345-c-a-t-s-u-s/Acrylic/refs/heads/main/source'))();
-
---Library.Theme:Houston()
-
-local Window = Library:CreateWindow({
-	Title = 'Acrylic - '..Library.Version..' '..Library.TextEffect:AddColor('by 4lpaca',Color3.fromRGB(0, 255, 238)),
-	Logo = "rbxassetid://7733920644",
-});
-
-local ExampleTab = Window:AddTab({
-	Title = 'Example',
-	Icon = 'home',
-});
-
-local SettingsTab = Window:AddTab({
-	Title = 'Settings',
-	Icon = 'settings',
-});
-
-ExampleTab:AddBlock('Example')
-
-ExampleTab:AddButton({
-	Title = 'Button',
-	Callback = function()
-		print('Click!')
-	end,
-})
-
-ExampleTab:AddToggle({
-	Title = 'Toggle',
-	Default = false,
-	Callback = function(value)
-		print('Toggle!',value)
-	end,
-})
-
-ExampleTab:AddSlider({
-	Title = 'Slider',
-	Max = 100,
-	Min = 1,
-	Default = 25,
-	Round = 1,
-	Callback = function(value)
-		print('Slider!',value)
-	end,
-})
-
-ExampleTab:AddKeybind({
-	Title = 'Keybind',
-	Default = "LeftControl",
-	Callback = function(value)
-		print('Keybind!',value)
-	end,
-})
-
-
-ExampleTab:AddTextbox({
-	Title = 'Textbox',
-	PlaceHolder = 'Type something',
-	--Default = "Text",
-	Callback = function(value)
-		print('Textbox!',value)
-	end,
-})
-
-
-ExampleTab:AddDropdown({
-	Title = 'Dropdown',
-	Values = {1,2,3,4,5,6,7,8,9,10},
-	Default = 5,
-	Callback = function(value)
-		print('Dropdown!',value)
-	end,
-})
-
-ExampleTab:AddDropdown({
-	Title = 'Multiple Dropdown',
-	Values = {1,2,3,4,5,6,7,8,9,10},
-	Default = {3,4,5,6,7},
-	Multi = true,
-	MaxMulti = 10,
-	Callback = function(value)
-		print('Multiple Dropdown!',value)
-	end,
-})
-
-ExampleTab:AddParagraph({
-	Title = 'Paragraph',
-	Description = "Device Supported:\n[Mobile]: ✅\n[PC]: ✅\n[Console]: ✅\n\nExecutor Supported:\nSolara\nZolara\nSynapse Z\nWave\nTrigon\nCode X\nArceus X\nFluxus"
-})
-
-SettingsTab:AddBlock('Settings')
-
-SettingsTab:AddButton({
-	Title = "Reset UI Size",
-	Callback = function()
-		Window:Resize(Library.SizeLibrary.Default)
-	end,
-})
-
-SettingsTab:AddToggle({
-	Title = 'Performance',
-	Default = false,
-	Callback = function(a)
-		Library.PerformanceMode = a;
-	end,
-})
-
-SettingsTab:AddBlock("")
-
-SettingsTab:AddButton({
-	Title = "Destroy UI",
-	Callback = function()
-		Window:Destroy()
-	end,
-})
-```
-
-# Key System
-![Screenshot 2024-10-15 193017](https://github.com/user-attachments/assets/c9822e0b-2bb7-4261-973e-b5113920a4bf)
-```lua
-local Window = Library:CreateWindow({
-	Title = 'Acrylic',
-	Logo = "rbxassetid://7733920644",
-	KeySystem = true,
-	KeySystemInfo = {
-		Title = "- Key System -",
-		OnGetKey = function()
-			return setclipboard('https://example.com/getkey?hwid=')
-		end,
-		OnLogin = function(key)
-			if key == "1234" then
-				wait(0.1);
-				return true;
-			end;
-			
-			wait();
-			
-			return false;
-		end,
-	}
-});
 ```
