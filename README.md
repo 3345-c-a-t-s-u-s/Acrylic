@@ -212,3 +212,94 @@ Window:Dialog({
 	}
 })
 ```
+
+# Full Example
+
+```lua
+local AcrylicLibrary = loadstring(game:HttpGetAsync("https://raw.githubusercontent.com/3345-c-a-t-s-u-s/Acrylic/refs/heads/main/source", true))();
+local TextEffect = AcrylicLibrary.TextEffect;
+
+local Window = AcrylicLibrary:CreateWindow({
+	Title = string.format("Acrylic Library - %s" , TextEffect:AddColor(AcrylicLibrary.Version, AcrylicLibrary.Colors.Hightlight)),
+	Logo = "rbxassetid://7733752630",
+	Keybind = Enum.KeyCode.LeftControl,
+})
+
+Window:AddWatermark(string.format("WATERMARK [%s]",TextEffect:AddColor("KNCRYPT HUB - FREEMIUM", AcrylicLibrary.Colors.Hightlight)))
+
+local Tab = Window:AddTab({
+	Title = "Example",
+	Icon = "library"
+})
+
+Tab:AddButton({
+	Title = "Button",
+	Tip = "Click Me!",
+	Callback = function()
+		print('Click!')
+	end,
+})
+
+Tab:AddToggle({
+	Title = "Toggle",
+	Tip = "Click Me!",
+	Default = false,
+	Callback = function(value)
+		print(value);
+	end,
+})
+
+Tab:AddSlider({
+	Title = "Slider",
+	Tip = "Min: 0\nMax: 100",
+	Min = 0,
+	Max = 100,
+	Default = 50,
+	Round = 2,
+	Callback = function(value)
+		print(value)
+	end,
+})
+
+Tab:AddTextbox({
+	Title = "Textbox",
+	Default = "Hello, World",
+	PlaceHolder = "Placeholder",
+	Numeric = false,
+	Callback = function(value)
+		print(value)
+	end,
+})
+
+
+Tab:AddKeybind({
+	Title = "Keybind",
+	Default = Enum.KeyCode.G,
+	Tip = "Keybind",
+	Callback = function(value)
+		print(value)
+	end,
+})
+
+Tab:AddDropdown({
+	Title = "Dropdown",
+	Values = {"V1","V2","V3","V4","V5"},
+	Default = "V1",
+	Multi = false,
+	MaxMulti = 4,
+	Callback = function(value)
+		print(value)
+	end,
+})
+
+Tab:AddParagraph({
+	Title = "Paragraph",
+	Description = AcrylicLibrary:HightlightSource([[
+local X = 15;
+
+for I = 1 , X do
+	print(I);
+end;
+]])
+})
+```
