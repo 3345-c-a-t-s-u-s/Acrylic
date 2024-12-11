@@ -4569,7 +4569,7 @@ function Library:CreateWindow(setup)
 			ValueText.Size = UDim2.new(0.800000012, 0, 0.600000024, 0)
 			ValueText.ZIndex = 17
 			ValueText.Font = Enum.Font.Gotham
-			ValueText.Text = (setup.Multi and Fconcat(setup.Default)) or tostring(setup.Default);
+			ValueText.Text = (setup.Multi and Fconcat(setup.Default or {})) or tostring(setup.Default or "NONE");
 			ValueText.TextColor3 = Library.Colors.TextColor
 			ValueText.TextScaled = true
 			ValueText.TextSize = 14.000
@@ -4626,12 +4626,12 @@ function Library:CreateWindow(setup)
 				return setup.Default;
 			end;
 
-			function RootSkid:Value(Setup)
-				setup.Default = Setup;
-				ValueText.Text = (setup.Multi and Fconcat(Setup)) or tostring(Setup);
-				setup.Default = Setup;
+			function RootSkid:Value(SetupR)
+				setup.Default = SetupR;
+				ValueText.Text = (setup.Multi and Fconcat(SetupR)) or tostring(SetupR);
+				setup.Default = SetupR;
 				UpdateSize()
-				setup.Callback(Setup)
+				setup.Callback(SetupR)
 			end;
 
 			function RootSkid:SetValue(data)
