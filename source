@@ -4627,7 +4627,7 @@ function Library:CreateWindow(setup)
 			end;
 
 			function RootSkid:Value(Setup)
-				setup.Default = setup;
+				setup.Default = Setup;
 				ValueText.Text = (setup.Multi and Fconcat(Setup)) or tostring(Setup);
 				setup.Default = Setup;
 				UpdateSize()
