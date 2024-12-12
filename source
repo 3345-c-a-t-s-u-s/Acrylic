@@ -2068,7 +2068,9 @@ function Library:CreateWindow(setup)
 	setup.Keybind = setup.Keybind or Enum.KeyCode.LeftControl;
 	setup.Size = setup.Size or Library.SizeLibrary.Default;
 	setup.KeySystem = setup.KeySystem or false;
-	setup.Logo = setup.Logo or "rbxassetid://7733920644"
+	setup.Logo = setup.Logo or "rbxassetid://7733920644";
+	setup.ToggleMethod = setup.ToggleMethod or "Application";
+	
 	if setup.KeySystem then
 		setup.KeySystemInfo = setup.KeySystemInfo or {};
 
@@ -4786,7 +4788,7 @@ function Library:CreateWindow(setup)
 				BackgroundTransparency = 1
 			})
 		end;
-		
+
 		function WindowLibrary:Message(setup)
 			setup = setup or {};
 			setup.Title = setup.Title or "Message";
@@ -4811,7 +4813,7 @@ function Library:CreateWindow(setup)
 			Message.Size = UDim2.new(0, 55, 0, 0)
 			Message.ZIndex = 265
 			Message.ClipsDescendants = true;
-			
+
 			DropShadow.Name = "DropShadow"
 			DropShadow.Parent = Message
 			DropShadow.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
@@ -4826,7 +4828,7 @@ function Library:CreateWindow(setup)
 			DropShadow.ScaleType = Enum.ScaleType.Slice
 			DropShadow.SliceCenter = Rect.new(95, 103, 894, 902)
 			DropShadow.SliceScale = 0.050
-			
+
 			UIStroke.Transparency = 0.850
 			UIStroke.Color = Color3.fromRGB(156, 156, 156)
 			UIStroke.Parent = Message
@@ -4852,7 +4854,7 @@ function Library:CreateWindow(setup)
 			Title.TextSize = 16.000
 			Title.TextStrokeColor3 = Color3.fromRGB(220, 224, 234)
 			Title.TextStrokeTransparency = 0.950
-		
+
 			Description.Name = "Description"
 			Description.Parent = Message
 			Description.AnchorPoint = Vector2.new(0.5, 0)
@@ -4871,70 +4873,70 @@ function Library:CreateWindow(setup)
 			Description.TextStrokeColor3 = Color3.fromRGB(220, 224, 234)
 			Description.TextStrokeTransparency = 0.950
 			Description.TextTransparency = 0.500
-			
+
 			OpenBackground();
-			
+
 			local Update = function()
-				
+
 				Library:Tween(DropShadow,Library.TweenLibrary.SmallEffect,{
 					ImageTransparency = 0.25;
 				})
-				
+
 				local DescriptionSize = Library:GetTextSize(Description.Text,Description.TextSize,Description.Font);
 				local TitleSize = Library:GetTextSize(Title.Text,Title.TextSize,Title.Font);
-				
+
 				Description.Size = UDim2.fromOffset(DescriptionSize.X + 45 , DescriptionSize.Y + 6)
 				Title.Size = UDim2.fromOffset(TitleSize.X + 5 , TitleSize.Y + 6)
-				
+
 				local MainX = ((TitleSize.X > DescriptionSize.X) and TitleSize.X) or DescriptionSize.X;
-				
-				
+
+
 				Library:Tween(Message,Library.TweenLibrary.SmallEffect,{
-					Size = UDim2.fromOffset(MainX + 35 , DescriptionSize.Y + 35 + TitleSize.Y),
+					Size = UDim2.fromOffset(MainX + 35 , DescriptionSize.Y + 75 + TitleSize.Y),
 					BackgroundTransparency = 0.250,
-					
+
 				});
-				
+
 				Library:Tween(UIStroke,Library.TweenLibrary.SmallEffect,{
 					Transparency = 0.850
 				})
 			end;
-			
+
 			Update()
-			
+
 			local rfm = {};
-			
+
 			function rfm:Title(s)
 				Title.Text = s;
 				Update()
 			end
-			
+
 			function rfm:Description(s)
 				Description.Text = s;
 				Update()
 			end
-			
+
 			function rfm:Destroy(s)
 				CloseBackground();
-				
+
 				Library:Tween(Message,Library.TweenLibrary.SmallEffect,{
 					Size = UDim2.fromOffset(Message.AbsoluteSize.X - 25,0),
 					BackgroundTransparency = 1,
 				});
-				
+
 				Library:Tween(DropShadow,Library.TweenLibrary.SmallEffect,{
 					ImageTransparency = 1;
 				})
-				
+
 				Library:Tween(UIStroke,Library.TweenLibrary.SmallEffect,{
 					Transparency = 1
 				})
-				
+
 				task.delay(0.5,function()
 					Message:Destroy()
 				end)
 			end
-			
+
 			return rfm
 		end;
 
@@ -5639,9 +5641,11 @@ function Library:CreateWindow(setup)
 		local update = function()
 
 			local size = Library:GetTextSize(Message.Text:gsub("<.->", ""),Message.TextSize,Message.Font)
+			local SIZE2 = Library:GetTextSize(Title.Text:gsub("<.->", ""),Title.TextSize,Title.Font)
 			
+			local mainx = ((SIZE2.X > size.X) and SIZE2.X) or size.X
 			Library:Tween(Notification,Library.TweenLibrary.BinEffect,{
-				Size = UDim2.new(0, size.X + 25, 0, (10 + size.Y) + Title.AbsoluteSize.Y),
+				Size = UDim2.new(0, mainx + 35, 0, (10 + size.Y) + Title.AbsoluteSize.Y),
 				BackgroundTransparency = 0.3
 			})
 		end;
